@@ -1,0 +1,218 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id                String   @id @default(uuid())
+  phone             String   @unique
+  name              String
+  telegramId        String?  @unique
+  telegramUsername  String?
+  email             String?
+  birthday          DateTime?
+  vkProfile         String?
+  status            String   @default("active")
+  trustedStatus     Boolean  @default(false)
+  trustedStatusAt   DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  clubAccount       ClubAccount?
+  bonusAccount      BonusAccount?
+  orders            Order[]
+  consents          CustomerConsent[]
+  bonusTransactions BonusTransaction[]
+  referralsMade     Referral[] @relation("Referrer")
+  referredBy        Referral[] @relation("Referred")
+  photoChallenges   PhotoChallenge[]
+  birthdayRewards   BirthdayReward[]
+}
+
+model DocumentVersion {
+  id            String   @id @default(uuid())
+  documentType  String
+  version       String
+  title         String
+  filePath      String
+  effectiveFrom DateTime
+  createdAt     DateTime @default(now())
+
+  consents      CustomerConsent[]
+}
+
+model CustomerConsent {
+  id             String   @id @default(uuid())
+  customerId     String
+  documentId     String
+  consentType    String
+  isGranted      Boolean  @default(true)
+  grantedAt      DateTime @default(now())
+  revokedAt      DateTime?
+  source         String
+  ipAddress      String?
+
+  customer       Customer @relation(fields: [customerId], references: [id])
+  document       DocumentVersion @relation(fields: [documentId], references: [id])
+}
+
+model ClubAccount {
+  id              String   @id @default(uuid())
+  customerId      String   @unique
+  balanceRub      Float    @default(0)
+  clubActive      Boolean  @default(false)
+  activatedAt     DateTime?
+  lastTopupAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  customer        Customer @relation(fields: [customerId], references: [id])
+  topups          ClubTopup[]
+}
+
+model ClubTopup {
+  id              String   @id @default(uuid())
+  clubAccountId   String
+  customerId      String
+  amountRub       Float
+  paymentProvider String
+  paymentStatus   String   @default("pending")
+  paymentId       String?
+  channel         String
+  createdAt       DateTime @default(now())
+  paidAt          DateTime?
+
+  clubAccount     ClubAccount @relation(fields: [clubAccountId], references: [id])
+}
+
+model BonusAccount {
+  id             String   @id @default(uuid())
+  customerId     String   @unique
+  balanceBonus   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  customer       Customer @relation(fields: [customerId], references: [id])
+}
+
+model BonusTransaction {
+  id             String   @id @default(uuid())
+  customerId     String
+  orderId        String?
+  referralId     String?
+  type           String
+  amountBonus    Int
+  source         String
+  comment        String?
+  createdAt      DateTime @default(now())
+
+  customer       Customer @relation(fields: [customerId], references: [id])
+  order          Order?   @relation(fields: [orderId], references: [id])
+  referral       Referral? @relation(fields: [referralId], references: [id])
+}
+
+model Machine {
+  id             String   @id @default(uuid())
+  name           String
+  location       String?
+  currentFlavor  String
+  status         String   @default("online")
+  cupsCapacity   Int      @default(160)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  orders         Order[]
+  inventory      MachineInventory[]
+}
+
+model MachineInventory {
+  id             String   @id @default(uuid())
+  machineId      String
+  itemType       String
+  itemName       String
+  capacity       Int?
+  quantityLeft   Int?
+  updatedAt      DateTime @updatedAt
+
+  machine        Machine @relation(fields: [machineId], references: [id])
+}
+
+model Order {
+  id                  String   @id @default(uuid())
+  customerId           String?
+  machineId            String
+  flavor               String
+  syrup                String?
+  topping              String?
+  basePriceRub         Float
+  clubDiscountRub      Float    @default(0)
+  promoDiscountRub     Float    @default(0)
+  bonusSpent           Int      @default(0)
+  amountPaidRub        Float
+  bonusEarned          Int      @default(0)
+  paymentMethod        String
+  paymentStatus        String   @default("pending")
+  createdAt            DateTime @default(now())
+  paidAt               DateTime?
+
+  customer             Customer? @relation(fields: [customerId], references: [id])
+  machine              Machine @relation(fields: [machineId], references: [id])
+  bonusTransactions    BonusTransaction[]
+  photoChallenge       PhotoChallenge?
+  birthdayReward       BirthdayReward?
+}
+
+model Referral {
+  id                    String   @id @default(uuid())
+  referrerCustomerId     String
+  referredCustomerId     String?  @unique
+  referralCode           String
+  status                 String   @default("registered")
+  firstPurchaseAt        DateTime?
+  referrerBonusPaid      Boolean  @default(false)
+  referredBonusPaid      Boolean  @default(false)
+  milestoneBonusPaid     Boolean  @default(false)
+  createdAt              DateTime @default(now())
+
+  referrer               Customer @relation("Referrer", fields: [referrerCustomerId], references: [id])
+  referred               Customer? @relation("Referred", fields: [referredCustomerId], references: [id])
+  bonusTransactions      BonusTransaction[]
+}
+
+model PhotoChallenge {
+  id             String   @id @default(uuid())
+  customerId     String
+  orderId        String   @unique
+  photoFilePath  String?
+  platform       String?
+  postUrl        String?
+  deadlineAt     DateTime
+  status         String   @default("waiting")
+  moderatorId    String?
+  bonusAmount    Int      @default(30)
+  reviewedAt     DateTime?
+  createdAt      DateTime @default(now())
+
+  customer       Customer @relation(fields: [customerId], references: [id])
+  order          Order    @relation(fields: [orderId], references: [id])
+}
+
+model BirthdayReward {
+  id             String   @id @default(uuid())
+  customerId     String
+  year           Int
+  status         String   @default("available")
+  issuedAt       DateTime @default(now())
+  expiresAt      DateTime
+  redeemedAt     DateTime?
+  orderId        String?  @unique
+
+  customer       Customer @relation(fields: [customerId], references: [id])
+  order          Order? @relation(fields: [orderId], references: [id])
+
+  @@unique([customerId, year])
+}
