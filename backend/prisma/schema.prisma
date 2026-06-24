@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -31,6 +31,7 @@ model Customer {
   referredBy        Referral[] @relation("Referred")
   photoChallenges   PhotoChallenge[]
   birthdayRewards   BirthdayReward[]
+  payments          Payment[]
 }
 
 model DocumentVersion {
@@ -87,6 +88,7 @@ model ClubTopup {
   paidAt          DateTime?
 
   clubAccount     ClubAccount @relation(fields: [clubAccountId], references: [id])
+  payment         Payment?
 }
 
 model BonusAccount {
@@ -215,4 +217,33 @@ model BirthdayReward {
   order          Order? @relation(fields: [orderId], references: [id])
 
   @@unique([customerId, year])
+}
+
+model Payment {
+  id                String   @id @default(uuid())
+  customerId        String?
+  clubTopupId       String?  @unique
+
+  amountRub         Float
+  currency          String   @default("RUB")
+
+  provider          String   @default("yookassa")
+  providerPaymentId String?  @unique
+  providerStatus    String?
+
+  status            String   @default("pending")
+  description       String?
+
+  confirmationUrl   String?
+  returnUrl         String?
+
+  metadata          Json?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  confirmedAt       DateTime?
+  canceledAt        DateTime?
+
+  customer          Customer? @relation(fields: [customerId], references: [id])
+  clubTopup         ClubTopup? @relation(fields: [clubTopupId], references: [id])
 }
