@@ -1,7 +1,36 @@
-
-
+# -----------------------------
+# Environment
+# -----------------------------
 backend/.env
-backend/node_modules/
+telegram-bot/.env
+.env
+
+# -----------------------------
+# Node
+# -----------------------------
 node_modules/
+backend/node_modules/
+telegram-bot/node_modules/
+frontend/miniapp/node_modules/
+
+# -----------------------------
+# Build
+# -----------------------------
+frontend/miniapp/dist/
+
+# -----------------------------
+# Logs
+# -----------------------------
 *.log
+npm-debug.log*
+
+# -----------------------------
+# OS
+# -----------------------------
 .DS_Store
+Thumbs.db
+
+# -----------------------------
+# Local backup
+# -----------------------------
+backup_git_conflict/
