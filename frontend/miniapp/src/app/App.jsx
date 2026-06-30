@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MiniAppHomePage } from '../pages/MiniAppHomePage.jsx';
 import { ProductScreen } from '../screens/02_PRODUCT/ProductScreen.jsx';
 import { readUserSettings } from '../consent/userSettingsStorage.js';
