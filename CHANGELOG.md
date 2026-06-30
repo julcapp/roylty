@@ -6,6 +6,11 @@
 
 ## [v0.3.0-alpha.1] — In progress
 
+### Added
+
+- AGENTS.md как главный документ инструкций для AI-агентов и Codex Desktop.
+- PROJECT_MEMORY.md как долговременная память проекта для разработчиков и AI-агентов.
+
 ### Planned
 
 - Data Layer для Mini App.
