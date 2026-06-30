@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { trackEvent } from '../analytics/trackEvent.js';
 import { readUserSettings, saveUserSettings } from './userSettingsStorage.js';
 
