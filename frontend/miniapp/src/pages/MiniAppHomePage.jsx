@@ -1,3 +1,4 @@
+import React from 'react';
 import { AppHeader } from '../components/organisms/AppHeader/AppHeader.jsx';
 import { BottomNavigation } from '../components/organisms/BottomNavigation/BottomNavigation.jsx';
 import { ConsentPanel } from '../consent/ConsentPanel.jsx';
