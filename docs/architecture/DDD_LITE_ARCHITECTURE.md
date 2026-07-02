@@ -63,7 +63,7 @@ domain/catalog/
 ```text
 domain/pricing/
 ├── priceData.js
-├── PriceEngine.js
+├── PricingEngine.js
 └── PriceRepository.js
 ```
 

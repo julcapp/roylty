@@ -52,5 +52,17 @@ Decision: PRODUCT-004 adds the Configuration Engine foundation in `frontend/mini
 Reason: Product configuration needs an isolated, UI-independent source of truth that validates product, flavor, size, syrup, topping and extras before Pricing, Recipe, Media and Machine engines consume the result.
 Expected effect: Future screens and channels can request a normalized ConfigurationEntity without embedding configuration validation in React, and removing `domain/configuration` fully rolls back the feature.
 
+## ADR-010
+Date: 2026-07-02
+Decision: PRODUCT-005 adds the Recipe Engine core in `frontend/miniapp/src/domain/recipe/*` with RecipeEntity, RecipeRepository, RecipeService and module exports.
+Reason: A validated ConfigurationEntity must map to a machine-independent preparation recipe before later Machine Engine integration, without mixing recipe logic into UI, pricing, media or vending commands.
+Expected effect: Future order, CRM, analytics and vending flows can consume a normalized RecipeEntity from RecipeService while repository-backed recipe definitions remain replaceable by API or PostgreSQL.
+
+## ADR-011
+Date: 2026-07-02
+Decision: PRODUCT-006 adds the Pricing Engine core in `frontend/miniapp/src/domain/pricing/*` with PricingEntity, PricingRepository, PricingService and PricingEngine facade.
+Reason: Product pricing must be calculated from Product, Configuration and Recipe domain entities without embedding financial rules in UI, Wallet, Payment or Machine code.
+Expected effect: Future checkout, wallet and payment flows can consume a normalized PricingEntity while pricing rules remain repository-backed and replaceable by API or PostgreSQL.
+
 ## Правило
 Каждое значимое техническое или продуктовое решение должно добавляться в этот журнал с датой, причиной и ожидаемым эффектом.

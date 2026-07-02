@@ -8,6 +8,8 @@
 
 ### Added
 
+- PRODUCT-006 Pricing Engine core with PricingEntity, repository-backed MVP pricing rules, PricingService calculation and PricingEngine facade.
+- PRODUCT-005 Recipe Engine core with RecipeEntity, in-memory RecipeRepository definitions, RecipeService validation and module exports.
 - PRODUCT-004 Configuration Engine foundation with ConfigurationEntity, ConfigurationRepository, ConfigurationService and module exports.
 - PRODUCT-003 domain entity normalization for Product, Flavor, Syrup, Topping, RecipeReference and MediaReference.
 - PRODUCT-001 DDD Lite domain foundation for Mini App domains and shared infrastructure folders.
@@ -21,7 +23,7 @@
 - JSON-каталоги продукции, сиропов, топпингов, медиа и цен.
 - CatalogService.
 - MediaService.
-- PriceEngine.
+- PricingEngine.
 - ProductConfigurator.
 - Подготовка экрана Preview.
 
